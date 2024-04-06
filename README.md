@@ -2,10 +2,12 @@
 A CLI log scrobbler for your portable devices.
 
 Based on [this](https://code.launchpad.net/scrobblethis) orphaned package last updated in 2011.
+
 WARNING: Log files will be deleted once uploaded to prevent double scrobbling.
 
 # Requirements
-- Python
+- Working on Python 3.11.8
+- PyLast
 
 # Usage
 Upload log:
