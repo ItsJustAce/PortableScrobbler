@@ -1,0 +1,79 @@
+#! /usr/bin/python
+
+import st.common as common
+import st.log as log
+import optparse, sys, os
+import st.accounts as accounts
+import st.relativetime as relativetime
+
+
+options = None
+
+def say(stuff):
+    if not options.quiet:
+        print(stuff)
+
+def main():
+    # parse args
+    parser = optparse.OptionParser(
+                usage = "%prog [OPTIONS] [LOG_DIRECTORY]",
+                description = "Command-line portable player log scrobbler",
+                version = "%s\nWritten by: Amr Hassan <amr.hassan@gmail.com>" %(common.version)
+                )
+    parser.add_option("-q", "--quiet", action="store_true", default=False)
+    global options
+    (options, args) = parser.parse_args()
+    
+    # read the accounts
+    acs = accounts.get_accounts()
+    if len(acs) < 1:
+        accounts.write_default_accounts()
+        say("Error:\n"+
+            "Could not find any account information.\n"+
+            "Please configure at least one account in the file:\n%s" %(common._get_config_path("accounts.config"))
+            )
+        sys.exit(1)
+    
+    # find log (or probe for one)
+    paths = log.get_paths(*args)
+    
+    if len(paths) < 1:
+        say("Error:\n"+
+            "Could not find any valid log file.\nPlease specify one in the command line arguments."
+            )
+        sys.exit(1)
+    
+    # start scrobbling
+    for path in paths:
+        say("Read log from %s" %(os.path.dirname(path)))
+        tracks = log.parse(path)
+        for track in tracks:
+            say(" [%s] %s - %s " %(
+                    relativetime.get_relative_time(track.timestamp),
+                    track.artist, track.title)
+                )
+            
+            for ac in acs:
+                # add to the list of tracks to be scrobbled
+                ac.add_to_scrbble_cache(track)
+        
+        say("")
+        
+        # now submit
+        for ac in acs:
+            say("Submitting %d tracks to %s..." %(len(ac.cache), ac.username + "@" + ac.type))
+            ac.scrobble()
+    
+    # success
+    say ("\nAll tracks were scrobbled successfully.")
+    try:
+        for path in paths:
+            os.remove(path)
+        say("All log files were removed.")
+    except:
+        say("Some or all log files could not be removed. Please remove them manually.")
+        say("\n".join(paths))
+        
+    sys.exit(0)
+    
+if __name__ == "__main__": main()

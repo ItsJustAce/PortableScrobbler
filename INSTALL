@@ -1,0 +1,21 @@
+Installation
+==================
+
+  Requirements
+  ------------
+
+    * python (>=2.7)
+    * python-xdg
+    * python-pylast (0.5)
+
+  Installation
+  ------------
+
+    To install, perform the following command as root:
+
+      $ python setup.py install
+
+  Configuration
+  -------------
+    
+    See `man scrobblethis` for the list of files used to configure scrobblethis.
