@@ -21,7 +21,7 @@ def get_build():
     return int(build)
 
 setup(
-    name = "scrobblethis",
+    name = "portablescrobbler",
     version = "0.1.%d" %get_build(),
     description = "Command-line portable player log scrobbler",
     author = "Tom (ItsJustAce) <justace0@protonmail.me>",
