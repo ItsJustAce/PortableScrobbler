@@ -19,6 +19,7 @@
 version = "0.1.1"
     
 import os
+from pathlib import Path
 try:
     import configparser
 except ImportError:
@@ -31,12 +32,17 @@ def _get_config_path(*resources):
         Returns a path to a configs file
         according to the xdg standards.
     """
+
+ 
     
     if "XDG_CONFIG_HOME" in os.environ:
         base = os.path.join(os.environ["XDG_CONFIG_HOME"], "portablescrobbler")
     else:
         base = os.path.expanduser("~/.config/portablscrobbler")
     
+    if not os.path.exists(base):
+        Path(base).mkdir(parents=True, exist_ok=True)
+                
     path = base
     for resource in resources:
         path = os.path.join(path, resource)

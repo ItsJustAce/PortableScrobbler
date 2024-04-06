@@ -18,13 +18,16 @@ def main():
     parser = optparse.OptionParser(
                 usage = "%prog [OPTIONS] [LOG_DIRECTORY]",
                 description = "Command-line portable player log scrobbler",
-                version = "%s\nWritten by: Amr Hassan <amr.hassan@gmail.com>" %(common.version)
+                version = "%s\nWritten by: ItsJustAce" %(common.version)
                 )
     parser.add_option("-q", "--quiet", action="store_true", default=False)
     global options
     (options, args) = parser.parse_args()
     
-    # read the accounts
+    ac = accounts.Account()
+    
+    ac.get_account()
+    """     # read the accounts
     acs = accounts.get_accounts()
     if len(acs) < 1:
         accounts.write_default_accounts()
@@ -32,7 +35,7 @@ def main():
             "Could not find any account information.\n"+
             "Please configure at least one account in the file:\n%s" %(common._get_config_path("accounts.config"))
             )
-        sys.exit(1)
+        sys.exit(1) """
     
     # find log (or probe for one)
     paths = log.get_paths(*args)
@@ -52,17 +55,24 @@ def main():
                     relativetime.get_relative_time(track.timestamp),
                     track.artist, track.title)
                 )
+        #add to list of tracks to be scrobbled to the account
+            ac.add_to_scrbble_cache(track)
+
             
-            for ac in acs:
+        """             for ac in acs:
                 # add to the list of tracks to be scrobbled
-                ac.add_to_scrbble_cache(track)
+                ac.add_to_scrbble_cache(track) """
         
         say("")
         
-        # now submit
+        """         # now submit
         for ac in acs:
             say("Submitting %d tracks to %s..." %(len(ac.cache), ac.username + "@" + ac.type))
-            ac.scrobble()
+            ac.scrobble() 
+        """
+        say("Submitting %d tracks to %s..." %(len(ac.cache), ac.type))
+        print(ac.cache)
+        ac.scrobble() 
     
     # success
     say ("\nAll tracks were scrobbled successfully.")

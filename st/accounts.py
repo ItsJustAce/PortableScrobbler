@@ -16,7 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
 
-import pylast, hashlib, os
+import pylast, os
 import st.common
 
 try:
@@ -25,9 +25,43 @@ except ImportError:
     import ConfigParser as configparser
 
 class Account(object):
-    def __init__(self, name, type, username, password, password_hash, submit_url, client_version):
+    def __init__(self):
+        self.cache = []
+        #self.username = str()
+        self.network = None
+        self.type ="Lastfm"
+        
+    """ old code
+            
+        if not password_hash:
+            password_hash = hashlib.md5(password).hexdigest()
+        
+        if type == "lastfm":
+            self.network = pylast.get_lastfm_network(username = username, password_hash = password_hash)
+        elif type == "librefm":
+            self.network = pylast.get_librefm_network(username = username, password_hash = password_hash)
+        elif type == "custom":
+            self.network = pylast.get_lastfm_network(username = username, password_hash = password_hash)
+            self.network.submission_server = submit_url
+        
+        self.scrobbler = self.network.get_scrobbler("sth", client_version)
+    """
+
+    
+    def add_to_scrbble_cache(self, track):
+        self.cache.append({"artist": track.artist, "title": track.title, "timestamp": track.timestamp, "album": track.album})
+                                
+    def scrobble(self):
+        self.network.scrobble_many(self.cache)
+    
+    def __repr__(self):
+        return self.name
+    
+    def get_account(self):
+
         API_KEY = "479958fd414cb83cea9b763b8c1aab58"  
         API_SECRET = "dc34430e8185b737000e448b010a4d60"
+
 
         SESSION_KEY_FILE = st.common._get_config_path(".session_key")
         self.network = pylast.LastFMNetwork(API_KEY, API_SECRET)
@@ -53,33 +87,6 @@ class Account(object):
             session_key = open(SESSION_KEY_FILE).read()
 
         self.network.session_key = session_key
-        self.cache = []
-        
-    """ old code
-            
-        if not password_hash:
-            password_hash = hashlib.md5(password).hexdigest()
-        
-        if type == "lastfm":
-            self.network = pylast.get_lastfm_network(username = username, password_hash = password_hash)
-        elif type == "librefm":
-            self.network = pylast.get_librefm_network(username = username, password_hash = password_hash)
-        elif type == "custom":
-            self.network = pylast.get_lastfm_network(username = username, password_hash = password_hash)
-            self.network.submission_server = submit_url
-        
-        self.scrobbler = self.network.get_scrobbler("sth", client_version)
-    """
-
-    
-    def add_to_scrbble_cache(self, track):
-        self.cache.append([track.artist, track.title, track.timestamp, track.album,])
-                                
-    def scrobble(self):
-        self.scrobbler.scrobble_many(self.cache)
-    
-    def __repr__(self):
-        return self.name
 
 """ def get_accounts():    
     c = configparser.ConfigParser(defaults={"password": "", "md5_password_hash": "", "submit_url": ""})

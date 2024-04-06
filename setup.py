@@ -22,13 +22,13 @@ def get_build():
 
 setup(
     name = "scrobblethis",
-    version = "0.4.%d" %get_build(),
+    version = "0.1.%d" %get_build(),
     description = "Command-line portable player log scrobbler",
-    author = "Amr Hassan <amr.hassan@gmail.com>",
-    author_email = "amr.hassan@gmail.com",
+    author = "Tom (ItsJustAce) <justace0@protonmail.me>",
+    author_email = "justace0@protonmail.me",
     license = "gpl",
-    url = "https://launchpad.net/scrobblethis",
-    scripts = ["scrobblethis"],
+    url = "https://github.com/ItsJustAce/PortableScrobbler",
+    scripts = ["portablescrobbler"],
     packages = ["st"],
     data_files = [
         ("/usr/share/man/man1", ("scrobblethis.1.gz",)),
