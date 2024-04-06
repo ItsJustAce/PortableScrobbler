@@ -26,11 +26,37 @@ except ImportError:
 
 class Account(object):
     def __init__(self, name, type, username, password, password_hash, submit_url, client_version):
-    
-        self.name = name
-        self.username = username
-        self.type = type
+        API_KEY = "479958fd414cb83cea9b763b8c1aab58"  
+        API_SECRET = "dc34430e8185b737000e448b010a4d60"
+
+        SESSION_KEY_FILE = st.common._get_config_path(".session_key")
+        self.network = pylast.LastFMNetwork(API_KEY, API_SECRET)
+        if not os.path.exists(SESSION_KEY_FILE):
+            skg = pylast.SessionKeyGenerator(self.network)
+            url = skg.get_web_auth_url()
+
+            print(f"Please authorize this script to access your account: {url}\n")
+            import time
+            import webbrowser
+
+            webbrowser.open(url)
+
+            while True:
+                try:
+                    session_key = skg.get_web_auth_session_key(url)
+                    with open(SESSION_KEY_FILE, "w") as f:
+                        f.write(session_key)
+                    break
+                except pylast.WSError:
+                    time.sleep(1)
+        else:
+            session_key = open(SESSION_KEY_FILE).read()
+
+        self.network.session_key = session_key
+        self.cache = []
         
+    """ old code
+            
         if not password_hash:
             password_hash = hashlib.md5(password).hexdigest()
         
@@ -43,12 +69,11 @@ class Account(object):
             self.network.submission_server = submit_url
         
         self.scrobbler = self.network.get_scrobbler("sth", client_version)
-        self.cache = []
+    """
+
     
     def add_to_scrbble_cache(self, track):
-        self.cache.append([track.artist, track.title, track.timestamp, pylast.SCROBBLE_SOURCE_USER,
-                                pylast.SCROBBLE_MODE_PLAYED, track.duration, track.album, track.position,
-                                track.musicbrainz])
+        self.cache.append([track.artist, track.title, track.timestamp, track.album,])
                                 
     def scrobble(self):
         self.scrobbler.scrobble_many(self.cache)
@@ -56,7 +81,7 @@ class Account(object):
     def __repr__(self):
         return self.name
 
-def get_accounts():    
+""" def get_accounts():    
     c = configparser.ConfigParser(defaults={"password": "", "md5_password_hash": "", "submit_url": ""})
     
     accounts_config_path = st.common._get_config_path("accounts.config")
@@ -76,8 +101,8 @@ def get_accounts():
                                     ))
         
     return l
-
-def write_default_accounts():
+ """
+''' def write_default_accounts():
     text = """# Enable one or more of these accounts
 # 
 # You can either provide your passwords or your md5 hash. To get a md5 of a string type this into a shell:
@@ -104,7 +129,8 @@ def write_default_accounts():
 #submit_url = 
 #username = 
 #password = 
-#md5_password_hash = """
+#md5_password_hash = """ 
+
     
     
     path = st.common._get_config_path("accounts.config")
@@ -123,3 +149,4 @@ def write_default_accounts():
     fp = open(path, "w")
     fp.write(text)
     fp.close()
+'''

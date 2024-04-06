@@ -55,7 +55,7 @@ def parse(path):
     
     # read tracks
     tracks = []
-    for line in lines[3:]:
+    for line in lines[4:]:
         v = line.split('\t')
         if len(v) < 8:
             v = v + [""]*(8-len(v)) # pad v with empty strings
@@ -74,7 +74,7 @@ def _get_history():
         return []
     
 def _add_to_history(*paths):
-    json.dump(list(set(paths)), open(common._get_config_path("history"), "w"))
+    json.dump(list(set(paths)), open(st.common._get_config_path("history"), "w"))
 
 def get_paths(*paths):
     """

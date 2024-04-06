@@ -16,7 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
 
-version = "0.4.3"
+version = "0.1.1"
     
 import os
 try:
@@ -33,9 +33,9 @@ def _get_config_path(*resources):
     """
     
     if "XDG_CONFIG_HOME" in os.environ:
-        base = os.path.join(os.environ["XDG_CONFIG_HOME"], "scrobblethis")
+        base = os.path.join(os.environ["XDG_CONFIG_HOME"], "portablescrobbler")
     else:
-        base = os.path.expanduser("~/.config/scrobblethis")
+        base = os.path.expanduser("~/.config/portablscrobbler")
     
     path = base
     for resource in resources:
