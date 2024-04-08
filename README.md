@@ -6,8 +6,10 @@ Based on [this](https://code.launchpad.net/scrobblethis) orphaned package last u
 WARNING: Log files will be deleted once uploaded to prevent double scrobbling.
 
 # Requirements
-- Working on Python 3.11.8
-- PyLast
+Below are the tested versions:
+
+- Python 3.11.8
+- PyLast 5.2.0
 
 # Usage
 Upload log:
